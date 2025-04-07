@@ -326,7 +326,14 @@ jobs:
           fi
           pytest -rfEsXR -n auto \
             --maxfail=50 --timeout=300 --durations=25 \
-            --cov-report=xml --cov=lib --log-level=DEBUG --color=yes
+            --cov-report=xml --cov=lib --log-level=DEBUG --color=yes \
+            --junitxml=junit.xml -o junit_family=legacy
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}  # Run even if tests fail
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Cleanup non-failed image files
         if: failure()
